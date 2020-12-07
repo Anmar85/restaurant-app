@@ -3,7 +3,7 @@ import {Modal, Header , Button} from 'semantic-ui-react' ;
 import useUpdateData from './useUpdateData.js';
 
 
-export default function AddRes(){
+export default function AddRes(props){
 
   const [open,setOpen]= React.useState(false)
 
@@ -12,6 +12,12 @@ export default function AddRes(){
       phoneNum:'',
       address:'',
       resUrl:'',
+      geometry: {
+        location :{
+          lng:() => 0,
+          lat:() => 0
+        }
+      }
    });
 
   /*const [resName,setResName]= useUpdateData('');
@@ -25,12 +31,14 @@ export default function AddRes(){
    console.log(data)
    
   }
+  data.geometry.location.lat = () => props.position.lat;
+  data.geometry.location.lng = () => props.position.lng;
 
 return (
     <Modal className="form"
      size= "small"
     onClose={()=> setOpen(false)}
-    onOpen={()=>setOpen(true)}
+    onOpen={()=> setOpen(true)}
     open={open}
     trigger={<Button>Add New Restaurant</Button>}
     >
@@ -40,14 +48,14 @@ return (
           <fieldset>
              <label>Resataurant Name</label>
              <input onChange={handleData}
-                         placeholder=' Pizza Pepper' name='resName' 
-                         value={data.resName}/>
+                         placeholder=' Pizza Pepper'
+                         value={data.resName} name="resName" />
             </fieldset>
           <fieldset>
              <label>Phone Number</label>
              <input onChange={handleData}
                          placeholder='0121 473 5050' 
-                         name="phoneNum" value={data.phoneNum}/> 
+                         value={data.phoneNum} name="phoneNum" /> 
           </fieldset>
           <fieldset> 
           <label>Adrees</label>
@@ -59,11 +67,11 @@ return (
                <label>Website</label>
               <input onChange={handleData}  
                          placeholder='pizzapeppersellyoak.com.uk'
-                         name="setResUrl" value={data.resUrl}/> 
+                         value={data.resUrl} name="resUrl" /> 
           </fieldset>
           <div>
-            <button  type="cancel" onClick={() => setOpen(false)}>Cancel</button>
-            <button  type="add" onClick={() => setOpen(false)}>Add</button>
+          <button  type="cancel" onClick={() => setOpen(false)}>Cancel</button>
+          <button type="add" onClick={(e) => props.addRestaurant(data)}>Add</button> 
           </div>
         </form>
        </Modal.Description>

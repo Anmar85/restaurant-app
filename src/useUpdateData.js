@@ -8,7 +8,7 @@ import {useState} from 'react';
         event.persist();
         
         setData(data => ({...data, [event.target.name]: event.target.value}));
-        console.log(data)
+        // console.log(data)
         //setData(event.target.value)
       }
     return [data,handleData]
