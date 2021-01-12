@@ -6,7 +6,6 @@ import ResForm from './ResForm.js'
 import StarRaing from './StarRating';
 import {Card} from "react-bootstrap";
 
-
     const libraries = ["places"];
     const mapContainerStyle ={
       height: "84vh",
@@ -26,19 +25,22 @@ export default function App () {
 
 
   // Display Google reviews,new reviews,total reviews variables
-  const [googleReviews, setGoogleReviews] = React.useState([]);
+  //onst [googleReviews, setGoogleReviews] = React.useState({});
+  var googleReviews = {}
   const [localReviews, setLocalReviews] = React.useState([]);
 
   const reviews = React.useRef([])
   React.useEffect(()=>{
     //console.log(googleReviews)
-    reviews.current = [...googleReviews,...localReviews];
+    console.log("called reviews useEffect")
+    reviews.current = [...localReviews];
+    console.log("reviews from reviews: ",reviews)
   })
 
   const addNewReview = (newRev) =>{
      setLocalReviews([...localReviews,newRev])
-     reviews.current =[...googleReviews,...localReviews,newRev]
-     console.log(reviews.current)
+     reviews.current =[...localReviews, newRev]
+     console.log("reviews from addNewReview: ",reviews.current)
   }
 
   // Adding restaurants(ByGoogle,NewRes, Total on map) variables
@@ -47,9 +49,11 @@ export default function App () {
   
   const restaurants = React.useRef([])
   React.useEffect(()=>{
+    console.log("called restaurants useEffect")
     //console.log(localRestaurants)
     //console.log(googleRestaurants)
-  restaurants.current = [...googleRestaurants,...localRestaurants];
+    restaurants.current = [...googleRestaurants,...localRestaurants];
+    console.log("restaurants from reviews: ",restaurants)
   })
 
   
@@ -64,17 +68,30 @@ export default function App () {
 
   // Get Restaurants reviews
   function getGoogleReviews(place_id) {
-    //console.log("map from getGoodleReviews",map)
-    const request = {
-      placeId: place_id,
-      fields: ["review"],
-    };
-    map.getDetails(request, callback);
+    if (map){
+      console.log("called getGoogleReviews: with placedId:",place_id )
+      const request = {
+        placeId: place_id,
+        fields: ["review", "place_id"],
+      };
+      if (googleReviews[place_id]){
+        console.log(googleReviews)
+        return googleReviews[place_id]
+      }
+      else{
+        console.log(googleReviews)
+        return map.getDetails(request, callback);
+      }  
+    }
 
+    //console.log("map from getGoodleReviews",map)
+    
     function callback(results, status) {
       if (status === window.google.maps.places.PlacesServiceStatus.OK) {
        // console.log(status,results.reviews)
-       return  setGoogleReviews(results.reviews)
+       console.log("callback is called with results= ", results)
+       localStorage.setItem(results.place_id, JSON.stringify(results.reviews));
+       return googleReviews[results.place_id] = results.reviews 
       }
     }}; 
 
@@ -179,7 +196,7 @@ export default function App () {
             position={center}
             title={'Current Location'}
           />
-                      
+            { /*restaurants.forEach(function(place){getGoogleReviews(place.place_id)})*/}          
             {/* Add Restaurants Markers */}
           {restaurants.current.map(restaurant => 
             <Marker
@@ -200,7 +217,8 @@ export default function App () {
                 getGoogleReviews(restaurant.place_id)
             }}
             />
-          )} 
+          )}
+           {restaurants.current.map(restaurant =>  getGoogleReviews(restaurant.place_id))}
             {/* Add Info Window to show restaurants details*/}          
           {clickedRest &&(
             <InfoWindow className="info-window"
@@ -251,8 +269,7 @@ export default function App () {
        </LoadScript>
       </div>
     </div>
-    <RestaurantTable max={max.maxValue} min={min.minValue} restaurants={restaurants.current} addNewResto={addNewResto}
-       reviews={reviews.current}  addNewReview={addNewReview} />
+    <RestaurantTable max={max.maxValue} min={min.minValue} restaurants={restaurants.current} addNewResto={addNewResto} reviews={reviews.current} addNewReview={addNewReview} getGoogleReviews={getGoogleReviews}/>
     
      </div>
     </div>

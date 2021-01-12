@@ -288,6 +288,7 @@ input[type=submit]:hover {
 .review{
   margin: 0;
   padding: 10px;
+  /* display: none; */
  }
 
 .review .single-review{

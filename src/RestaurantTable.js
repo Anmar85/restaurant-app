@@ -44,7 +44,7 @@ export default function  RestaurantTable(props) {
                                              </div>
                                              <div className=" col-sm-8" id="info-rapper">
                                                 <div id='info-name'><h5 key={item.place_id}>{item.name}</h5></div>
-                                             <RestDetails restaurants={item} reviews={props.reviews} addNewReview={props.addNewReview}></RestDetails>
+                                             <RestDetails restaurants={item} reviews={props.reviews} addNewReview={props.addNewReview} getGoogleReviews={props.getGoogleReviews}></RestDetails>
                                                  
   {/* <div className="d-flex align-items-center justify-content-center"
          style={{height: "2vh", float:'right'}}>
